@@ -5,7 +5,7 @@ import detailsStyle from '../scene/Details/detailsStyle'
 import { BLACK, PRIMARY, STATUS_BAR, } from '../config/colors';
 
 
-const CustomerList = ({ item }) => {
+const CharactersList = ({ item }) => {
     return (
         <View style={{ marginTop: 10, elevation: 10 }} >
             <View style={{ marginVertical: 10, marginHorizontal: 10 }}>
@@ -34,4 +34,4 @@ const CustomerList = ({ item }) => {
         </View>
     )
 }
-export default CustomerList;
+export default CharactersList;

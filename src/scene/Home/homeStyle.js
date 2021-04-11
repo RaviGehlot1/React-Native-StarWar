@@ -16,7 +16,12 @@ const styles = StyleSheet.create({
    marginBottom : 10
  },
  crawl : {
-   height : 180,
+   height : 60,
+   backgroundColor : BLACK,
+   alignItems: 'center',
+   justifyContent: 'center',
+   borderTopLeftRadius : 10,
+   borderTopRightRadius : 10
  },
  title : {
    fontSize : 18,

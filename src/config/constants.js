@@ -1,7 +1,7 @@
 import { Dimensions } from "react-native";
 
 //Base Url
-export const BASE_URL = "https://swapi.dev/api"
+export const BASE_URL = "http://swapi.dev/api"
 
 //Sub Url
 export const FILMS = "/films"

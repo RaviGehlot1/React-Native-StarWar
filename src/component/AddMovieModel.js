@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-// import Ionicons from 'react-native-vector-icons/Ionicons'
+import Ionicons from 'react-native-vector-icons/Ionicons'
 import { BLACK, GRAY, PRIMARY, STATUS_BAR, WHITE, } from '../config/colors';
 import CalendarPicker from 'react-native-calendar-picker';
 import moment from 'moment';
@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
         marginVertical: 10
     },
     key: { color: BLACK, fontSize: 16.5, fontWeight: 'bold' },
-    key_container: { flex: 1, alignItems: 'center', justifyContent: 'center', marginVertical: 10 }
+    key_container: { flex: 1, alignItems: 'center', justifyContent: 'center', }
 });
 
 const AddModelVisible = (props) => {
@@ -46,11 +46,11 @@ const AddModelVisible = (props) => {
                 if (director.length) {
                     if (producer.length) {
                         let obj = {
-                            title : title,
-                            director : director,
-                            producer : director,
-                            release_date : release_date,
-                            type : 'local'
+                            title: title,
+                            director: director,
+                            producer: director,
+                            release_date: release_date,
+                            type: 'local'
                         }
                         props.onSubmitPressed(obj)
                     } else {
@@ -77,8 +77,19 @@ const AddModelVisible = (props) => {
 
                 <View style={{ marginTop: 10, flex: 5 }}>
                     <ScrollView>
-                        <View style={{ alignItems: 'center', }}>
-                            <Text style={styles.title} >Add Movie</Text>
+                        <View style={{ alignItems: 'center', flexDirection: 'row' }}>
+                            <TouchableOpacity 
+                            onPress={()=> props.onBackPressed() }
+                            style={[styles.key_container, { flexDirection : 'row' }]} >
+                                <Ionicons name={'chevron-back'} color={BLACK} size={20} />
+                                <Text>{'Home'}</Text>
+                            </TouchableOpacity>
+                            <View style={{ flex : 4 ,alignItems: 'center', justifyContent: 'center', }} >
+                                <Text style={[styles.title,{ marginTop : 10 }]} >{"Add Movie"}</Text>
+                            </View>
+                            <View style={styles.key_container} >
+
+                            </View>
                         </View>
                         <View style={{ borderBottomWidth: 1, marginHorizontal: 15, borderColor: titleValid == undefined ? GRAY : titleValid ? GRAY : 'red', marginTop: 10 }} >
                             <TextInput
@@ -100,7 +111,7 @@ const AddModelVisible = (props) => {
                                 <TouchableOpacity
                                     onPress={() => setIsCalVisible(true)}
                                     style={{ height: 50, marginLeft: 15, justifyContent: 'center', }}>
-                                    <Text style={{ color: GRAY, fontWeight: 'bold' }} >{ release_date.length ? release_date : "Pick a Release Date"}</Text>
+                                    <Text style={{ color: GRAY, fontWeight: 'bold' }} >{release_date.length ? release_date : "Pick a Release Date"}</Text>
                                 </TouchableOpacity>
                                 :
                                 <CalendarPicker

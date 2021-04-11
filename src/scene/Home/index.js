@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, Image, NativeModules, TouchableOpacity, StatusBar, FlatList, ActivityIndicator } from 'react-native';
+import { Text, View, Image, NativeModules, TouchableOpacity, StatusBar, FlatList, ActivityIndicator, BackHandler, Alert, Modal } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 // var commonModule = NativeModules.CommonModule;
@@ -14,12 +14,15 @@ import { CHARACTERS, DIRECTOR, PRODUCER, STARSHIPS, VEHICLES, SPECIES, BASE_URL,
 import { integer_to_roman } from '../../utils/commonFunction';
 import { FloatingAction } from 'react-native-floating-action';
 import AddModelVisible from '../../component/AddMovieModel';
+
+let currentCount = 0
+
 class HomeScreen extends Component {
   constructor(props) {
     super(props)
     this.state = {
       data: [],
-      viewMore: 0,
+      viewMore: null,
       isRefreshing: false,
       actions: [
         {
@@ -31,14 +34,47 @@ class HomeScreen extends Component {
           iconWidth: 35
         },
       ],
-      isModelVisible: false
+      isModelVisible: false,
+      crawlModelVisible: false,
+      crawlLoader: false,
+      selectTitle: '',
+      selectIntro: ''
     }
   }
 
+  backAction = () => {
+    setTimeout(() => {
+      currentCount = 0;
+    }, 2000);
+    if (currentCount < 1) {
+      currentCount += 1;
+      return true
+    } else {
+      // exit the app here using BackHandler.exitApp();
+      Alert.alert("Hold on!", "Are you sure you want to exit app?", [
+        {
+          text: "Cancel",
+          onPress: () => null,
+          style: "cancel"
+        },
+        { text: "YES", onPress: () => BackHandler.exitApp() }
+      ]);
+      return true;
+    }
+  };
+
+
   componentDidMount() {
+    this.backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      this.backAction
+    );
     this.getData()
   }
 
+  componentWillUnmount() {
+    this.backHandler.remove()
+  }
   getData = async () => {
     await this.props.fetchToDos(BASE_URL + FILMS)
     this.setState({
@@ -59,7 +95,7 @@ class HomeScreen extends Component {
   }
 
   onRefresh() {
-    this.setState({ isRefreshing: true, }, () => { this.getData() });
+    this.setState({ isRefreshing: true, viewMore: null }, () => { this.getData() });
   }
 
   renderList() {
@@ -78,13 +114,24 @@ class HomeScreen extends Component {
                 viewMore: index
               })}
               style={homeStyle.listContainer} >
-              <View style={homeStyle.crawl} >
-                <StarWars
-                  title={item.title}
-                  contentStyle={{}}
-                  content={item.opening_crawl}
-                />
-              </View>
+              <TouchableOpacity
+                onPress={() => {
+                  this.setState({
+                    crawlModelVisible: true,
+                    selectTitle: item.title,
+                    selectIntro: item.opening_crawl,
+                    crawlLoader: true
+                  })
+
+                  setTimeout(() => {
+                    this.setState({
+                      crawlLoader: false
+                    })
+                  }, 9500);
+                }}
+                style={homeStyle.crawl} >
+                <Text style={{ fontSize: 16, color: '#feda4a' }} >{"Click To Open Intro"}</Text>
+              </TouchableOpacity>
               <View style={{ marginVertical: 10, marginHorizontal: 10, flexDirection: 'row' }}>
                 <View style={{ flex: 4 }}>
                   <Text style={homeStyle.title} >{item.title}  ({integer_to_roman(item.episode_id)})</Text>
@@ -157,6 +204,39 @@ class HomeScreen extends Component {
     )
   }
 
+  renderCrawlModel() {
+    return (
+      <Modal visible={this.state.crawlModelVisible} >
+        <View style={{ flex: 1 }}>
+          <View style={{ flex: 4, backgroundColor: BLACK, alignItems: 'center', justifyContent: 'center', }}>
+            <StarWars
+              title={this.state.selectTitle}
+              contentStyle={{ fontSize: 12 }}
+              content={this.state.selectIntro}
+            />
+            {this.state.crawlLoader ?
+              <ActivityIndicator size={'large'} color={WHITE} />
+              :
+              null
+            }
+          </View>
+          <View style={{ flex: 1, backgroundColor: BLACK, alignItems: 'center', justifyContent: 'center', }}>
+            <TouchableOpacity
+              onPress={() => {
+                this.setState({
+                  crawlModelVisible: false
+                })
+              }}
+              style={{ backgroundColor: GRAY, borderRadius: 10 }}
+            >
+              <Text style={{ fontSize: 16, fontWeight: 'bold', color: WHITE, marginHorizontal: 20, marginVertical: 10 }} >{"Close"}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    )
+  }
+
   handleSubmit(data) {
     var arr = []
     arr = this.state.data
@@ -168,6 +248,11 @@ class HomeScreen extends Component {
     console.log(data);
   }
 
+  onBackPressed() {
+    this.setState({
+      isModelVisible: false
+    })
+  }
 
   render() {
     const { todos, isFetching } = this.props.data
@@ -192,10 +277,13 @@ class HomeScreen extends Component {
             color={FLOATING}
             actions={this.state.actions}
             onPressItem={name => {
-              this.props.navigation.navigate(name, { from: "Home" })
+              this.setState({
+                isModelVisible: true
+              })
             }}
           />
-          <AddModelVisible visible={this.state.isModelVisible} onSubmitPressed={(event) => { this.handleSubmit(event) }} />
+          {this.renderCrawlModel()}
+          <AddModelVisible visible={this.state.isModelVisible} onSubmitPressed={(event) => { this.handleSubmit(event) }} onBackPressed={() => this.onBackPressed()} />
         </View>
       )
     }

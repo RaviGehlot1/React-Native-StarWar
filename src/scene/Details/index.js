@@ -11,7 +11,7 @@ import { BLACK, GRAY, PRIMARY, STATUS_BAR, WHITE } from '../../config/colors';
 import detailsStyle from './detailsStyle';
 import { checkStringKeys } from '../../utils/commonFunction';
 import { Actions } from 'react-native-router-flux';
-import CustomerList from '../../component/CustomerList';
+import CharactersList from '../../component/CharactersList';
 import VehicleList from '../../component/VehiclesList';
 import StarshipList from '../../component/StarshipList';
 import SpeciesList from '../../component/SpeciesList';
@@ -117,9 +117,9 @@ class DetailsScreen extends Component {
         showsVerticalScrollIndicator={false}
         renderItem={({ item, index }) => {
           // console.log("hello", item.todos.films)
-          if (this.props.data.title === "Customers") {
+          if (this.props.data.title === "Characters") {
             return (
-              <CustomerList item={item} />
+              <CharactersList item={item} />
             )
           } else {
             if (this.props.data.title === "Vehicles") {

@@ -29,6 +29,7 @@ export default function todosReducer(state = initialState, action) {
         ...state,
         isFetching: false,
         error: true,
+        error_message : action.err
       };
     default:
       return state;

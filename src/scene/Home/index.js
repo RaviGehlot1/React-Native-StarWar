@@ -211,7 +211,7 @@ class HomeScreen extends Component {
           <View style={{ flex: 4, backgroundColor: BLACK, alignItems: 'center', justifyContent: 'center', }}>
             <StarWars
               title={this.state.selectTitle}
-              contentStyle={{ fontSize: 12 }}
+              contentStyle={{}}
               content={this.state.selectIntro}
             />
             {this.state.crawlLoader ?
@@ -255,9 +255,10 @@ class HomeScreen extends Component {
   }
 
   render() {
-    const { todos, isFetching } = this.props.data
+    const { todos, isFetching, error,error_message } = this.props.data
     // console.log(this.props.data.todos);
     if (isFetching) {
+      
       return (
         <View style={homeStyle.container} >
           <Header title={"Star War"} />
@@ -267,6 +268,9 @@ class HomeScreen extends Component {
         </View>
       )
     } else {
+      if (error) {
+        Alert.alert("Network Error")
+      }
       return (
         <View style={homeStyle.container}>
           <Header title={'Star War'} />
@@ -291,7 +295,7 @@ class HomeScreen extends Component {
 }
 
 const mapStateToProps = (state) => {
-  // console.log('state',state);
+  console.log('state',state);
   return {
     data: state.todos
   }

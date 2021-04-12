@@ -4,7 +4,7 @@ import { FETCH_TODOS_SUCCESS, FETCH_TODOS_FAILURE, FETCHING_TODOS, BASE_URL } fr
 export function fetchToDos(url) {
     return async dispatch => {
         dispatch(getToDos());
-
+        console.log(url);
         await axios.get(url)
             .then((response) => {
 
@@ -33,6 +33,7 @@ function getToDosSuccess(data) {
 }
 
 function getToDosFailure(err) {
+    console.log(err);
     return {
         type: FETCH_TODOS_FAILURE,
         err
